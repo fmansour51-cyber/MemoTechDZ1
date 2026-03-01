@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>مولّد مذكرة تخرج (فكرة قصيرة → عنوان + عناصر + مراجع عربية)</title>
+
+<style>
+  :root{
+    --bg:#0f172a; --card:#111827; --line:rgba(255,255,255,.12);
+    --ink:#e5e7eb; --muted:#94a3b8; --brand:#0ea5a4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Arial;background:linear-gradient(180deg,#0b1022 0%, var(--bg) 65%);color:var(--ink)}
+  .top{position:sticky;top:0;z-index:10;background:rgba(15,23,42,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .top .inner{max-width:1100px;margin:0 auto;padding:10px 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .brand{display:flex;gap:10px;align-items:center}
+  .dot{width:10px;height:10px;border-radius:999px;background:var(--brand);box-shadow:0 0 18px rgba(14,165,164,.6)}
+  .muted{color:var(--muted);font-size:12px;line-height:1.7}
+  .wrap{max-width:1100px;margin:0 auto;padding:14px}
+  .panel{background:rgba(17,24,39,.85);border:1px solid var(--line);border-radius:18px;padding:12px;margin-top:12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+  .col{flex:1 1 180px;min-width:180px}
+  .col2{flex:2 1 340px;min-width:260px}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+  input{
+    width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);
+    background:#0b1220;color:var(--ink);font-size:14px
+  }
+  button{border:0;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:800;cursor:pointer}
+  .btn{background:var(--brand);color:#062a2a}
+  .btn2{background:#0b1220;color:var(--ink);border:1px solid var(--line)}
+  .nav{display:flex;gap:8px;flex-wrap:wrap}
+  .nav button{background:#0b1220;color:var(--ink);border:1px solid var(--line)}
+  .nav button.active{background:var(--brand);color:#062a2a;border-color:transparent}
+  .page{display:none;background:rgba(17,24,39,.85);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:12px}
+  .page.active{display:block}
+  .head{padding:16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg, rgba(14,165,164,.16), rgba(17,24,39,0))}
+  .body{padding:16px}
+  h1{margin:0 0 8px;font-size:20px}
+  h2{margin:14px 0 8px;font-size:16px}
+  textarea{
+    width:100%;min-height:180px;resize:vertical;padding:10px;border-radius:12px;border:1px solid var(--line);
+    background:#0b1220;color:var(--ink);font-size:14px;line-height:1.85
+  }
+  .two{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+  .ref{padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#0b1220;margin-bottom:10px}
+  .ref b{display:block;margin-bottom:4px}
+  .foot{padding:12px;text-align:center;color:var(--muted);font-size:12px}
+  @media print{
+    .top,.panel,.nav{display:none}
+    body{background:#fff;color:#000}
+    .page{display:block;border:0;margin:0;box-shadow:none}
+    .head{background:#fff}
+    textarea{border:1px solid #ddd;background:#fff;color:#000}
+    .ref{border:1px solid #ddd;background:#fff}
+  }
+</style>
+</head>
+
+<body>
+  <div class="top">
+    <div class="inner">
+      <div class="brand">
+        <span class="dot"></span>
+        <div>
+          <div style="font-weight:900">مولّد مذكرة تخرج</div>
+          <div class="muted">اكتب فكرة قصيرة → يولّد عنوان + إشكالية + أهداف + منهج + مراجع عربية</div>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="active" data-page="cover">الواجهة</button>
+        <button data-page="problem">محتوى الدراسة</button>
+        <button data-page="refs">المراجع</button>
+        <button class="btn2" onclick="window.print()">طباعة PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- لوحة التحكم -->
+    <div class="panel">
+      <div class="row">
+        <div class="col2">
+          <label>فكرة قصيرة (كلمة/موضوع) — مثال: ChatGPT / RFID / أمن المعلومات / السحابة</label>
+          <input id="ideaInput" placeholder="مثال: ChatGPT" />
+        </div>
+        <div class="col2">
+          <label>العنوان المقترح (يمكن تعديله)</label>
+          <input id="titleInput" placeholder="سيتم اقتراح عنوان تلقائيًا بعد الضغط على توليد" />
+        </div>
+        <div class="col2">
+          <label>اسم الطالب(ة)</label>
+          <input id="student" placeholder="مثال: فتحي منصور" />
+        </div>
+        <div class="col">
+          <label>السنة الجامعية</label>
+          <input id="year" value="2025/2026" />
+        </div>
+        <div class="col">
+          <button class="btn" id="gen">توليد</button>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:8px">
+        الجامعة: <b>جامعة زيان عاشور – الجلفة</b> • الكلية: <b>العلوم الاجتماعية والإنسانية</b> • القسم: <b>علم المكتبات والإعلام والاتصال</b><br>
+        المشرف: <b>د. خنفر</b> • بعد التوليد تقدر تعدّل أي نص داخل الخانات.
+      </div>
+    </div>
+
+    <!-- الصفحة 1: الواجهة -->
+    <section class="page active" id="cover">
+      <div class="head">
+        <h1>الواجهة</h1>
+        <div class="muted">محتوى جاهز للطباعة — عدّل عند الحاجة</div>
+      </div>
+      <div class="body">
+        <textarea id="coverText"></textarea>
+        <div class="foot">صفحة 1</div>
+      </div>
+    </section>
+
+    <!-- الصفحة 2: المحتوى -->
+    <section class="page" id="problem">
+      <div class="head">
+        <h1>محتوى الدراسة</h1>
+        <div class="muted">إشكالية + تساؤلات + فرضيات + أهداف + أهمية + منهج + كلمات مفتاحية</div>
+      </div>
+
+      <div class="body two">
+        <div>
+          <h2>الإشكالية</h2>
+          <textarea id="problemText"></textarea>
+        </div>
+        <div>
+          <h2>التساؤلات الفرعية</h2>
+          <textarea id="questionsText"></textarea>
+        </div>
+        <div>
+          <h2>الفرضيات</h2>
+          <textarea id="hypoText"></textarea>
+        </div>
+        <div>
+          <h2>الأهداف والأهمية والمنهج والكلمات المفتاحية</h2>
+          <textarea id="metaText"></textarea>
+        </div>
+
+        <div class="foot" style="grid-column:1/-1">صفحة 2</div>
+      </div>
+    </section>
+
+    <!-- الصفحة 3: المراجع -->
+    <section class="page" id="refs">
+      <div class="head">
+        <h1>المصادر والمراجع (عربية)</h1>
+        <div class="muted">15 مرجع عربي — قابل للتعديل</div>
+      </div>
+      <div class="body">
+        <div id="refsBox"></div>
+        <div class="muted">
+          ملاحظة: هذه قائمة نموذجية. استبدلها بمراجع دقيقة من مكتبتك/مذكرات/كتب/مقالات متاحة.
+        </div>
+        <div class="foot">صفحة 3</div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  // تنقل بين الصفحات
+  const navBtns = document.querySelectorAll(".nav button[data-page]");
+  const pages = document.querySelectorAll(".page");
+  function showPage(id){
+    pages.forEach(p => p.classList.toggle("active", p.id===id));
+    navBtns.forEach(b => b.classList.toggle("active", b.dataset.page===id));
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  navBtns.forEach(b => b.addEventListener("click", ()=>showPage(b.dataset.page)));
+
+  const UNI_BLOCK = `جامعة زيان عاشور – الجلفة
+كلية العلوم الاجتماعية والإنسانية
+قسم علم المكتبات والإعلام والاتصال`;
+  const SUPERVISOR = "د. خنفر";
+
+  function studentName(){ return (document.getElementById("student").value || "............................"); }
+  function yearVal(){ return (document.getElementById("year").value || "2025/2026"); }
+
+  function ideaVal(){
+    const x = (document.getElementById("ideaInput").value || "").trim();
+    return x || "الموضوع";
+  }
+  function titleVal(){
+    const x = (document.getElementById("titleInput").value || "").trim();
+    return x || "............................................................";
+  }
+
+  // اقتراح عنوان تلقائي حسب الفكرة (قواعد بسيطة)
+  function suggestTitle(idea){
+    const t = idea.trim();
+    const lower = t.toLowerCase();
+    if (t.includes("ChatGPT") || lower.includes("chatgpt")){
+      return "أثر استخدام ChatGPT في تحسين خدمات الإرشاد المعلوماتي بالمكتبات الجامعية";
+    }
+    if (t.includes("RFID") || t.includes("rfid") || t.includes("إنترنت الأشياء") || t.includes("IoT")){
+      return "توظيف RFID وإنترنت الأشياء في تحسين إدارة الإعارة والخدمات بالمكتبات الجامعية";
+    }
+    if (t.includes("السحابة") || t.includes("الحوسبة السحابية") || lower.includes("cloud")){
+      return "أثر الحوسبة السحابية على كفاءة نظم إدارة المكتبات: دراسة تقييمية";
+    }
+    if (t.includes("أمن") || t.includes("سيبر") || lower.includes("security")){
+      return "تقييم مستوى أمن المعلومات في المكتبات الرقمية وأثره على جودة الخدمات";
+    }
+    if (t.includes("الفهرسة") || t.includes("تصنيف")){
+      return "توظيف تقنيات الذكاء الاصطناعي في تطوير الفهرسة الآلية بالمكتبات الجامعية";
+    }
+    if (t.includes("استرجاع") || t.includes("بحث")){
+      return "استخدام تقنيات التعلم الآلي في تحسين استرجاع المعلومات بالمكتبات الرقمية";
+    }
+    // افتراضي
+    return `أثر ${t} على جودة الخدمات المعلوماتية بالمكتبات الجامعية`;
+  }
+
+  // توليد النصوص حسب (الفكرة + العنوان)
+  function buildTexts(idea, title){
+    const cover = `
+الجمهورية الجزائرية الديمقراطية الشعبية
+وزارة التعليم العالي والبحث العلمي
+
+${UNI_BLOCK}
+
+مذكرة تخرج لنيل شهادة الليسانس/الماستر
+تخصص: تكنولوجيا وهندسة المعلومات (يمكن تعديله)
+
+عنوان المذكرة:
+${title}
+
+إعداد الطالب(ة): ${studentName()}
+تحت إشراف: ${SUPERVISOR}
+
+السنة الجامعية: ${yearVal()}
+`.trim();
+
+    const problem = `
+يندرج موضوع المذكرة ضمن تكنولوجيا وهندسة المعلومات في مؤسسات المعلومات (المكتبات/الأرشيف/مراكز التوثيق).
+ويأتي عنوان الدراسة "${title}" في سياق التطور التقني وارتفاع توقعات المستفيدين من حيث جودة الخدمات (السرعة، الدقة، سهولة الوصول، وأمن البيانات).
+وتتمثل الإشكالية في معرفة مدى تأثير ${idea} على تحسين جودة الخدمات المعلوماتية داخل المؤسسة محل الدراسة.
+
+السؤال الرئيس:
+ما مدى تأثير ${idea} في تحسين جودة الخدمات المعلوماتية بالمؤسسة محل الدراسة؟
+`.trim();
+
+    const questions = `
+1) ما المقصود بـ ${idea} وما أهم مفاهيمه/تطبيقاته في مؤسسات المعلومات؟
+2) ما واقع توظيف ${idea} في المؤسسة محل الدراسة؟
+3) ما أثر ${idea} على جودة الخدمة (السرعة، الدقة، سهولة الاستخدام، رضا المستفيد)؟
+4) ما التحديات التقنية والتنظيمية والبشرية التي تواجه التطبيق؟
+5) ما متطلبات أمن المعلومات وحماية البيانات عند توظيف ${idea}؟
+6) ما المقترحات العملية لتحسين توظيف ${idea} ورفع جودة الخدمات؟
+`.trim();
+
+    const hypo = `
+1) يساهم ${idea} في تحسين جودة الخدمات المعلوماتية من حيث السرعة والدقة.
+2) تؤثر قابلية الاستخدام وتكوين العاملين إيجابياً على نجاح توظيف ${idea}.
+3) ضعف البنية التحتية/نقص الموارد يحد من فعالية توظيف ${idea}.
+4) الالتزام بأمن المعلومات وحماية البيانات يعزز الثقة ويرفع جودة الخدمة.
+5) نجاح توظيف ${idea} يتطلب حوكمة واضحة وخطة متابعة وتقييم.
+`.trim();
+
+    const meta = `
+أهداف الدراسة:
+- التعرف على واقع توظيف ${idea} في المؤسسة محل الدراسة.
+- قياس أثر ${idea} على مؤشرات جودة الخدمات (السرعة، الدقة، رضا المستفيد).
+- تحديد التحديات والمعوقات واقتراح حلول عملية للتطوير.
+
+أهمية الدراسة:
+- إبراز دور التقنيات الحديثة في تطوير خدمات مؤسسات المعلومات.
+- دعم صناع القرار داخل المكتبة/المؤسسة بمقترحات قابلة للتطبيق لتحسين الجودة.
+
+منهج الدراسة وأداة جمع البيانات (اقتراح):
+- المنهج: وصفي/تحليلي (ودراسة حالة عند الحاجة).
+- الأدوات: استبيان للمستفيدين + مقابلة/ملاحظة + تحليل وثائق وتقارير.
+
+الكلمات المفتاحية:
+${idea}، جودة الخدمات، المكتبات الجامعية، نظم المعلومات، رضا المستفيد، التحول الرقمي.
+`.trim();
+
+    return {cover, problem, questions, hypo, meta};
+  }
+
+  // 15 مرجع عربي (قالب)
+  const arabicRefs = [
+    "عبد الهادي، محمد فتحي. مدخل إلى علم المعلومات. (كتاب/مرجع عام).",
+    "قنديلجي، عامر إبراهيم. نظم المعلومات: المفاهيم والاتجاهات الحديثة. (كتاب).",
+    "الحمامي، علي. المكتبات الرقمية: المفهوم، البناء، الخدمات. (كتاب).",
+    "الحراحشة، أحمد. التحول الرقمي وإدارة المعرفة في المؤسسات المعلوماتية. (كتاب/دراسة).",
+    "عبد الحميد، محمد. منهجية البحث العلمي: أسس ومهارات. (كتاب).",
+    "الزهراني، عبدالله. أمن المعلومات وحماية البيانات: مفاهيم وتطبيقات. (كتاب).",
+    "العمري، أحمد. إدارة المعرفة وتطبيقاتها في مؤسسات المعلومات. (كتاب/مرجع).",
+    "عليان، ربحي مصطفى. مصادر المعلومات وخدماتها في المكتبات ومراكز المعلومات. (كتاب).",
+    "الزويبي، محمد. جودة الخدمات ورضا المستفيدين في مؤسسات المعلومات. (دراسة).",
+    "خليل، إبراهيم. قواعد البيانات ونظم إدارة المحتوى في البيئة الرقمية. (كتاب/مرجع).",
+    "الشمري، فهد. الحكومة الإلكترونية والخدمات الرقمية: دراسة تطبيقية. (كتاب/بحث).",
+    "بن عبد الله، سمير. معايير تقييم المواقع والخدمات الإلكترونية في المكتبات. (بحث).",
+    "بوغزالة، نادية. رقمنة الأرشيف وإدارة الوثائق الإلكترونية. (كتاب/بحث).",
+    "المرسي، محمود. إدارة المشاريع الرقمية والتحول المؤسسي. (مرجع).",
+    "موقع/تقرير رسمي للمؤسسة محل الدراسة + تقارير وزارة التعليم العالي حول الرقمنة (سنة الولوج: ....)."
+  ];
+
+  function renderRefs(list){
+    const box = document.getElementById("refsBox");
+    box.innerHTML = "";
+    list.forEach((r,i)=>{
+      const div = document.createElement("div");
+      div.className = "ref";
+      div.innerHTML = `<b>${i+1})</b><div>${r}</div>`;
+      box.appendChild(div);
+    });
+  }
+
+  // زر التوليد
+  document.getElementById("gen").addEventListener("click", ()=>{
+    const idea = ideaVal();
+
+    // إذا العنوان فارغ، اقترح عنوان تلقائي
+    const titleField = document.getElementById("titleInput");
+    if (!titleField.value.trim()){
+      titleField.value = suggestTitle(idea);
+    }
+    const title = titleVal();
+
+    const t = buildTexts(idea, title);
+
+    document.getElementById("coverText").value = t.cover;
+    document.getElementById("problemText").value = t.problem;
+    document.getElementById("questionsText").value = t.questions;
+    document.getElementById("hypoText").value = t.hypo;
+    document.getElementById("metaText").value = t.meta;
+
+    renderRefs(arabicRefs);
+    showPage("cover");
+  });
+
+  // تهيئة أولية
+  (function init(){
+    const idea = "ChatGPT";
+    document.getElementById("ideaInput").value = idea;
+    document.getElementById("titleInput").value = suggestTitle(idea);
+    const t = buildTexts(idea, document.getElementById("titleInput").value);
+    document.getElementById("coverText").value = t.cover;
+    document.getElementById("problemText").value = t.problem;
+    document.getElementById("questionsText").value = t.questions;
+    document.getElementById("hypoText").value = t.hypo;
+    document.getElementById("metaText").value = t.meta;
+    renderRefs(arabicRefs);
+  })();
+</script>
+</body>
+  </html>
